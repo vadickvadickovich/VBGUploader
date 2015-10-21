@@ -1,0 +1,5 @@
+with open('files.bbs') as f:
+   content = f.readlines()
+   string.split(slitter)
+   for line in content:
+'files.bbs', tags = line.split("-")
