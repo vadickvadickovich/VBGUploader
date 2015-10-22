@@ -1,2 +1,2 @@
-# VladBidloSiteUploader
-VladBidloSiteUploader
+# VBSUploader
+Uploader for VladBidloSite
