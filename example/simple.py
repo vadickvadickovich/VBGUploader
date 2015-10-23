@@ -1,6 +1,6 @@
 fileName = "files.bbs"
 
-filesbbs = open("files.bbs", "r")
+filesbbs = open(fileName, "r")
 fileContent = filesbbs.readlines()
 filesbbs.close()
 
