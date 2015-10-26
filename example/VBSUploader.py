@@ -1,6 +1,8 @@
 import re
 import sys
 import os
+import subprocess
+import getpass
 
 class pictureInfo:
 	def __init__(self, fileName, tags):
@@ -59,7 +61,7 @@ class VBSParser:
 
 
 class VBSUploader:
-	"""VBSUploader main class.
+	"""VBSUploader main class. (WIP)
 
 	Init Parameters:
         siteName (Type STR):
@@ -78,16 +80,32 @@ class VBSUploader:
             Your user password in plain text.
 	"""
 
-	def __init__(self, siteName, siteURL, username, password, hashString):
+	def __init__(self, siteName, siteURL, username="", password="", scriptDir=".VBSUploader"):
 		self.siteName = siteName
 		self.siteURL = siteURL
-		self.username = username
-		self.password = password
-		self.hashString = hashString
+
+		if username == "":
+			self.username = input("Username for " + self.siteName + ": ")
+		else:
+			self.username = username
+
+		if password == "":
+			self.password = getpass.getpass("Password for " + self.siteName + ": ")
+		else:
+			self.password = password
+
+		self.scriptDir = scriptDir
 
 		if not self.checkURL(self.siteURL):
 			print "Invalid URL"
 			sys.exit()
+
+		self.createScriptDir()
+		self.login()
+
+	def createScriptDir(self):
+		if not os.path.exists(self.scriptDir):
+			os.path.makedirs(self.scriptDir)
 
 	def checkURL(self, url):
 		"""URL validator for siteUrl parameter of VBSUploader.
@@ -111,6 +129,10 @@ class VBSUploader:
 		else:
 			return False
 
+	def login(self):
+		cookies = self.scriptDir + "/" + self.siteName + ".cookies"		
+		subprocess.call(["curl", "-s", "-b", cookies, "-c", cookies, "-d", "user[name]=" + self.username + "&user[password]=" + self.password, self.siteURL + "/user/authenticate.xml"])
+
 	def postCreate(self):
 		pass
 
@@ -121,8 +143,10 @@ class VBSUploader:
 		pass
 
 def main():
-	parser = VBSParser('files.bbs')
-	parser.debugPrint()
+	#parser = VBSParser('files.bbs')
+	#parser.debugPrint()
+
+	vbsuploader = VBSUploader("VladBidloGallery", "bidlogallery.vadickproduction.com")
 
 if __name__ == '__main__':
 	main()
