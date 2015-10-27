@@ -56,7 +56,7 @@ class VBSParser:
 			self.picturesInfo.append(pictureInfo(fileName, tags))
 
 class VBSUploader:
-	"""VBSUploader main class. (WIP)
+	"""VBSUploader main class.
 
 	Init Parameters:
         siteName (Type STR):
