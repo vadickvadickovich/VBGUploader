@@ -27,6 +27,10 @@ class VBSParser:
 		self.loadContent()
 		self.parseContent()
 
+	def getPictureList(self):
+		"""Return list of pictutes and tags."""
+		return self.picturesInfo
+
 	def checkFile(self, fileName):
 		"""Check if file exists.
 
@@ -50,15 +54,6 @@ class VBSParser:
 		for line in self.content:
 			fileName, tags = line.split(" - ")
 			self.picturesInfo.append(pictureInfo(fileName, tags))
-
-	def debugPrint(self):
-		writeFile = open("output.out", "w")
-		for picture in self.picturesInfo:
-			outputString = "File: " + picture.fileName + " Tags: " + picture.tags
-			print outputString
-			writeFile.write(outputString + "\n")
-		writeFile.close()
-
 
 class VBSUploader:
 	"""VBSUploader main class. (WIP)
@@ -155,21 +150,32 @@ class VBSUploader:
         """
 		subprocess.call(["curl", "-s", "-b", self.cookies, "-c", self.cookies, "-F", "post[tags]=" + tags, "-F", "post[file]=@" + fileName, self.siteURL + "/post/create.xml"])
 
-	def massUpload(self, folderPath):
+	def massUpload(self, folderPath, infoFileName):
 		"""Mass upload from folder with file contains list of pictures and tags
 
         Parameters:
             folderPath (Type STR):
                 Path to folder with pictures and info file
+
+            infoFileName (Type STR):
+            	Name of file contains list of pictures and tags
         """
-		pass
+		if not os.path.exists(folderPath):
+			print folderPath + " not exists"
+			sys.exit()
+
+		parser = VBSParser(folderPath + "/" + infoFileName)
+		picturesList = parser.getPictureList()
+
+		for picture in picturesList:
+			fileName = folderPath + "/" + picture.fileName
+			tags = picture.tags
+			self.postCreate(fileName, tags)
 
 def main():
-	#parser = VBSParser('files.bbs')
-	#parser.debugPrint()
-
 	vbsuploader = VBSUploader("VladBidloGallery", "http://bidlogallery.vadickproduction.com")
-	vbsuploader.postCreate("test.jpg", "all_male archer emiya_shirou fate/stay_night male scrap_iron sword weapon")
+	#vbsuploader.postCreate("test.jpg", "all_male archer emiya_shirou fate/stay_night male scrap_iron sword weapon")
+	vbsuploader.massUpload("archer", "files.bbs")
 
 	print
 
