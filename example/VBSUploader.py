@@ -85,7 +85,7 @@ class VBSUploader:
 		self.siteURL = siteURL
 
 		if username == "":
-			self.username = input("Username for " + self.siteName + ": ")
+			self.username = raw_input("Username for " + self.siteName + ": ")
 		else:
 			self.username = username
 
@@ -105,7 +105,7 @@ class VBSUploader:
 
 	def createScriptDir(self):
 		if not os.path.exists(self.scriptDir):
-			os.path.makedirs(self.scriptDir)
+			os.makedirs(self.scriptDir)
 
 	def checkURL(self, url):
 		"""URL validator for siteUrl parameter of VBSUploader.
@@ -146,7 +146,7 @@ def main():
 	#parser = VBSParser('files.bbs')
 	#parser.debugPrint()
 
-	vbsuploader = VBSUploader("VladBidloGallery", "bidlogallery.vadickproduction.com")
+	vbsuploader = VBSUploader("VladBidloGallery", "http://bidlogallery.vadickproduction.com")
 
 if __name__ == '__main__':
 	main()
