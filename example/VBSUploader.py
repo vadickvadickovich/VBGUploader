@@ -70,42 +70,43 @@ class VBSUploader:
         siteUrl (Type STR):
             URL of VladBidloSite.
 
-        hashString (Type STR):
-            String that is hashed (required to login).
-
         username (Type STR):
             Your username of the site.
 
         password (Type STR):
             Your user password in plain text.
-	"""
 
+        scriptDir (Type STR):
+        	Script folder for temp files like cookies
+	"""
 	def __init__(self, siteName, siteURL, username="", password="", scriptDir=".VBSUploader"):
 		self.siteName = siteName
 		self.siteURL = siteURL
 
 		if username == "":
-			self.username = raw_input("Username for " + self.siteName + ": ")
-		else:
-			self.username = username
+			username = raw_input("Username for " + self.siteName + ": ")
 
 		if password == "":
-			self.password = getpass.getpass("Password for " + self.siteName + ": ")
-		else:
-			self.password = password
-
-		self.scriptDir = scriptDir
+			password = getpass.getpass("Password for " + self.siteName + ": ")
 
 		if not self.checkURL(self.siteURL):
 			print "Invalid URL"
 			sys.exit()
 
-		self.createScriptDir()
-		self.login()
+		self.createScriptDir(scriptDir)
+		self.login(username, password)
 
-	def createScriptDir(self):
-		if not os.path.exists(self.scriptDir):
-			os.makedirs(self.scriptDir)
+	def createScriptDir(self, scriptDir):
+		"""Script folder creator. This folder contains files like cookies and logs
+
+        Parameters:
+            scriptDir (Type STR):
+                Name of Script Folder
+        """
+		if not os.path.exists(scriptDir):
+			os.makedirs(scriptDir)
+
+		self.scriptDir = scriptDir
 
 	def checkURL(self, url):
 		"""URL validator for siteUrl parameter of VBSUploader.
@@ -129,17 +130,38 @@ class VBSUploader:
 		else:
 			return False
 
-	def login(self):
-		cookies = self.scriptDir + "/" + self.siteName + ".cookies"		
-		subprocess.call(["curl", "-s", "-b", cookies, "-c", cookies, "-d", "user[name]=" + self.username + "&user[password]=" + self.password, self.siteURL + "/user/authenticate.xml"])
+	def login(self, username, password):
+		"""Login method to get cookies
 
-	def postCreate(self):
-		pass
+        Parameters:
+            username (Type STR):
+                yep, it's username
 
-	def upload(self):
-		pass
+            password (Type STR):
+                and it's passowrd, how genius
+        """
+		self.cookies = self.scriptDir + "/" + self.siteName + ".cookies"
+		subprocess.call(["curl", "-s", "-b", self.cookies, "-c", self.cookies, "-d", "user[name]=" + username + "&user[password]=" + password, self.siteURL + "/user/authenticate.xml"])
 
-	def uploadFromFolder(self):
+	def postCreate(self, fileName, tags):
+		"""Post Creator and file uploader
+
+        Parameters:
+            fileName (Type STR):
+                Picture filename
+
+            tags (Type STR):
+                Tags for post
+        """
+		subprocess.call(["curl", "-s", "-b", self.cookies, "-c", self.cookies, "-F", "post[tags]=" + tags, "-F", "post[file]=@" + fileName, self.siteURL + "/post/create.xml"])
+
+	def massUpload(self, folderPath):
+		"""Mass upload from folder with file contains list of pictures and tags
+
+        Parameters:
+            folderPath (Type STR):
+                Path to folder with pictures and info file
+        """
 		pass
 
 def main():
@@ -147,6 +169,9 @@ def main():
 	#parser.debugPrint()
 
 	vbsuploader = VBSUploader("VladBidloGallery", "http://bidlogallery.vadickproduction.com")
+	vbsuploader.postCreate("test.jpg", "all_male archer emiya_shirou fate/stay_night male scrap_iron sword weapon")
+
+	print
 
 if __name__ == '__main__':
 	main()
