@@ -133,7 +133,7 @@ class VBSUploader:
                 yep, it's username
 
             password (Type STR):
-                and it's passowrd, how genius
+                and it's password, how genius
         """
 		self.cookies = self.scriptDir + "/" + self.siteName + ".cookies"
 		subprocess.call(["curl", "-s", "-b", self.cookies, "-c", self.cookies, "-d", "user[name]=" + username + "&user[password]=" + password, self.siteURL + "/user/authenticate.xml"])
@@ -174,7 +174,6 @@ class VBSUploader:
 
 def main():
 	vbsuploader = VBSUploader("VladBidloGallery", "http://bidlogallery.vadickproduction.com")
-	#vbsuploader.postCreate("test.jpg", "all_male archer emiya_shirou fate/stay_night male scrap_iron sword weapon")
 	vbsuploader.massUpload("archer", "files.bbs")
 
 	print
