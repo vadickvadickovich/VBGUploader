@@ -1,2 +1,2 @@
 # VBSUploader
-Uploader for VladBidloSite
+Mass Uploader for VladBidloGallery
